@@ -9,9 +9,15 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.chatapp.databinding.ActivityMainBinding;
 import com.example.chatapp.manu.ChatsFragment;
+import com.example.chatapp.manu.FriendsFragment;
+import com.example.chatapp.manu.StatusFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,17 +33,62 @@ public class MainActivity extends AppCompatActivity {
 
         setUpViewPager(binding.viewPage);
         binding.tabLayout.setupWithViewPager(binding.viewPage);
+        setSupportActionBar(binding.toolbar);
+
+        //floating btn
+        binding.viewPage.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                changeIcon(position);
+
+            }
+
+           
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
     }
 
+    private void changeIcon(final int index) {
+        binding.fabAction.hide();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                switch (index) {
+                    case 0:
+                        binding.fabAction.setImageDrawable(getDrawable(R.drawable.call_24));
+                        break;
+                    case 1:
+                        binding.fabAction.setImageDrawable(getDrawable(R.drawable.camera_24));
+                        break;
+                    case 2:
+                        binding.fabAction.setImageDrawable(getDrawable(R.drawable.create_24));
+                        break;
+                }
+                binding.fabAction.show();
+            }
+
+
+        }, 400);
+    }
 
 
     private void setUpViewPager(ViewPager viewPager){
 
         MainActivity.SectionPagerAdapter adapter = new SectionPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new ChatsFragment(),"Chats");
-        adapter.addFragment(new ChatsFragment(),"Status");
-        adapter.addFragment(new ChatsFragment(),"Friends");
+        adapter.addFragment(new StatusFragment(),"Status");
+        adapter.addFragment(new FriendsFragment(),"Friends");
 
         viewPager.setAdapter(adapter);
 
@@ -74,4 +125,27 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+       // return super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_main,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.menu_search:
+                Toast.makeText(this, "Searching", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.menu_more:
+                Toast.makeText(this, "more", Toast.LENGTH_SHORT).show();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+
+    }
 }
+
